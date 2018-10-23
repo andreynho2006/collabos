@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= htmlWebpackPlugin.options.productName %></title>
+
+    <meta charset="utf-8">
+    <meta name="description" content="<%= htmlWebpackPlugin.options.productDescription %>">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width<% if (htmlWebpackPlugin.options.ctx.mode.cordova) { %>, viewport-fit=cover<% } %>">
+
+    <link rel="icon" href="statics/quasar-logo.png" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="statics/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="statics/icons/favicon-16x16.png">
+  </head>
+  <body>
+    <!-- DO NOT touch the following DIV -->
+    <div id="q-app"></div>
+
+    <div id="anychart-embed-ZaSUIWJF" class="anychart-embed anychart-embed-ZaSUIWJF">
+      <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-base.min.js"></script>
+      <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-ui.min.js"></script>
+      <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-exports.min.js"></script>
+      <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-stock.min.js"></script>
+      <script src="https://cdn.anychart.com/releases/8.3.0/js/anychart-data-adapter.min.js"></script>
+      <div id="ac_style_ZaSUIWJF" style="display:none;">
+      html, body, #container {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+      }
+      </div>
+      <script>(function(){
+      function ac_add_to_head(el){
+        var head = document.getElementsByTagName('head')[0];
+        head.insertBefore(el,head.firstChild);
+      }
+      function ac_add_link(url){
+        var el = document.createElement('link');
+        el.rel='stylesheet';el.type='text/css';el.media='all';el.href=url;
+        ac_add_to_head(el);
+      }
+      function ac_add_style(css){
+        var ac_style = document.createElement('style');
+        if (ac_style.styleSheet) ac_style.styleSheet.cssText = css;
+        else ac_style.appendChild(document.createTextNode(css));
+        ac_add_to_head(ac_style);
+      }
+      ac_add_link('https://cdn.anychart.com/releases/8.3.0/css/anychart-ui.min.css');
+      ac_add_link('https://cdn.anychart.com/releases/8.3.0/fonts/css/anychart-font.min.css');
+      ac_add_style(document.getElementById("ac_style_ZaSUIWJF").innerHTML);
+      ac_add_style(".anychart-embed-ZaSUIWJF{width:600px;height:450px;}");
+      })();</script>
+      <div id="container"></div>
+      <script>
+      
+      anychart.onDocumentReady(function () {
+          anychart.data.loadCsvFile('https://cdn.anychart.com/csv-data/csco-daily.csv', function (data) {
+              var dataTable = anychart.data.table()
+              dataTable.addData(data)
+              var mapping = dataTable.mapAs({'open': 1, 'high': 2, 'low': 3, 'close': 4, 'value': 4})
+      
+              var chart = anychart.stock()
+              chart.scroller().enabled(false)
+      
+              var candlesPlot = chart.plot(0)
+              candlesPlot.yGrid(true).xGrid(true)
+              candlesPlot.yAxis(0).labels().position('inside')
+          candlesPlot.yAxis(0).ticks().enabled(false)      
+              candlesPlot.yAxis(0).orientation('right')
+      
+              var candlesLegend = candlesPlot.legend()
+              candlesLegend.title(false)
+              candlesLegend.fontSize(10)
+      
+              // Simple Moving Average
+              candlesPlot.sma(mapping, 5).series()
+              candlesPlot.sma(mapping, 10).series()
+              candlesPlot.sma(mapping, 20).series()
+            
+              // Exponential Moving Average
+              // candlesPlot.ema(mapping, 5).series()
+              // candlesPlot.ema(mapping, 10).series()
+              // candlesPlot.ema(mapping, 20).series()
+      
+              // Bollinger Bands indicator
+          // candlesPlot.bbands(mapping)      
+      
+              var candleSeries = candlesPlot.candlestick(mapping)
+              candleSeries.name('CSCO')
+              candleSeries.legendItem().iconType('rising-falling')
+              candleSeries.risingStroke("#24C780")
+              candleSeries.risingFill("#24C780")
+              candleSeries.fallingStroke("#FF694E")
+              candleSeries.fallingFill("#FF694E")  
+      
+              candleSeries.maxLabels()
+                .enabled(true)
+                .position('center-top	')
+                .format("{%high}")
+                .fontWeight('bold')
+                .fontColor('#6da632')
+      
+              candleSeries.minLabels()
+                .enabled(true)
+                .position('center-bottom')
+                .format("{%low}")
+                .fontWeight('bold')
+                .fontColor('#d81e05')      
+            
+              // Volume
+              var volumeMapping = dataTable.mapAs({
+                'value': 5,
+                'type': 'average'
+              })      
+              var volumePlot = chart.plot(1)
+              volumePlot.height('20%')
+              var volSeries =volumePlot.column(volumeMapping).name('Volume')
+              volSeries.risingStroke("#24C780")
+              volSeries.risingFill("#24C780")
+              volSeries.fallingStroke("#FF694E")
+              volSeries.fallingFill("#FF694E")        
+              volumePlot.xAxis().enabled(false)
+          volumePlot.yAxis(0).labels().position('inside')
+              volumePlot.yAxis(0).ticks().enabled(false)      
+          volumePlot.yAxis(0).labels().format('{%Value}{scale: (1000000)|(mln), decimalsCount: 0}')
+              volumePlot.yAxis(0).orientation('right')      
+              volumePlot.crosshair().yLabel().format('{%Value}{scale: (1000000)|(mln), decimalsCount: 0}')
+              var volumeLegend = volumePlot.legend()
+              volumeLegend.title(false)
+              volumeLegend.fontSize(10)
+              volumeLegend.title(false)
+         
+              // MACD
+              var macdPlot = chart.plot(2)
+              macdPlot.height('20%')
+              macdPlot.xAxis().enabled(false)
+          macdPlot.yAxis(0).labels().position('inside')
+              macdPlot.yAxis(0).ticks().enabled(false)      
+              macdPlot.yAxis(0).orientation('right')      
+          var macdLegend = macdPlot.legend()
+              macdLegend.fontSize(10)            
+              macdLegend.title(false)
+              var macd = macdPlot.macd(mapping, 12, 26, 9)
+              macd.macdSeries().stroke('#0094FF')
+              macd.macdSeries().fill('#0094FF')
+              macd.signalSeries().stroke('#FF6A00')
+              macd.signalSeries().fill('#FF6A00')
+              macd.histogramSeries().fill('#FF006E')
+              macd.histogramSeries().stroke('#FF006E')
+            
+              /*
+              // RSI
+              var rsiPlot = chart.plot(2)
+              rsiPlot.height('20%')
+              rsiPlot.xAxis().enabled(false)
+          rsiPlot.yAxis(0).labels().position('inside')
+              rsiPlot.yAxis(0).ticks().enabled(false)      
+              rsiPlot.yAxis(0).orientation('right')
+          var rsiLegend = rsiPlot.legend()
+              rsiLegend.fontSize(10)            
+              rsiLegend.title(false)
+              var rsi7 = rsiPlot.rsi(mapping, 7).series()
+              var rsi14 = rsiPlot.rsi(mapping, 14).series()
+              var rsi21 = rsiPlot.rsi(mapping, 21).series()
+            */
+           
+            var grouping = chart.grouping()
+              grouping.maxVisiblePoints(50)
+        
+              // set chart selected date/time range
+              chart.selectRange('2008-10-25', '2009-07-01')
+              chart.container('container')
+              chart.draw()
+          })
+      })
+      </script>
+      </div>
+  </body>
+</html>

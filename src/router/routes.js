@@ -6,7 +6,15 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/Index.vue') }
     ]
+  },
+  {
+    path: '/charts',
+    component: () => import('layouts/Charts.vue'),
+    children: [
+      { path: 'show', component: () => import('pages/Show.vue') }
+    ]
   }
+
 ]
 
 // Always leave this as last one

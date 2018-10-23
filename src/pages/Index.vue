@@ -1,14 +1,14 @@
 <template>
   <q-page class="flex flex-center">
-    <img alt="Quasar logo" src="~assets/quasar-logo-full.svg">
+    <a href="/#/charts/show" class="q-btn inline relative-position q-btn-item non-selectable q-btn-rectangle q-focusable q-hoverable bg-primary text-white items-center justify-center">Go to charts</a>
   </q-page>
 </template>
-
-<style>
-</style>
 
 <script>
 export default {
   name: 'PageIndex'
 }
 </script>
+
+<style>
+</style>
