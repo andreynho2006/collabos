@@ -1,3 +1,3 @@
-# Quasar App
+# Collabos App
 
-> WIP
+
